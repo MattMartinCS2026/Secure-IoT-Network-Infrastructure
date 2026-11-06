@@ -17,3 +17,4 @@ VirtualBox is used to simulate an IoT network with separate management/attacker 
 | `iot-router` | 192.168.10.1 / 192.168.20.1 | Routes traffic between networks |
 | `iot-device-1` | 192.168.20.10 | Simulated IoT device |
 | `iot-device-2` | 192.168.20.11 | Simulated IoT device |
+| `iot-attacker` | 192.168.10.20 | Kali Linux VM used for network scanning, brute-force testing, and DoS simulations |
