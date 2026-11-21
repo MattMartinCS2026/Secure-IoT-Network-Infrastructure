@@ -33,43 +33,30 @@ this controlled network.
 Used to confirm that only intended ports/services are reachable across the
 network boundary.
 
-- `nmap -sV -O -p- 192.168.20.10` — full port/service/OS scan of iot-device-1
-- `nmap -sV -O -p- 192.168.20.11` — full port/service/OS scan of iot-device-2
-- `nmap -sV -p- 192.168.10.1,192.168.20.1` — scan of iot-router's exposed services
+`nmap -sV -O -p- <target>` run against iot-device-1, iot-device-2, and iot-router.
 
-**Expected result:** Only explicitly allowed ports/services are visible from
-the admin/attacker network; all other ports should appear filtered/closed due
-to the firewall ruleset.
-
-**Result:** _TBD — fill in after running on live VM_
+**Without security measures:** All three scans completed successfully, fully enumerating open ports, services, and OS details.
+**With security measures:** All three scans failed to connect or never completed — firewall blocked reconnaissance traffic.
 
 ### 2. Brute-Force Testing
 
 Used to test whether authentication on exposed services could be compromised
 if reached from the attacker network.
 
-- `hydra -l <username> -P /usr/share/wordlists/rockyou.txt.gz ssh://192.168.20.10`
-- (Repeat against any other authenticated service found during scanning.)
+`hydra -l <username> -P /usr/share/wordlists/rockyou.txt.gz ssh://192.168.20.10`
 
-**Expected result:** If SSH/authentication is not exposed to the admin
-network per the firewall rules, this test should show no reachable login
-surface. If reachable, it tests credential strength as a secondary control.
-
-**Result:** _TBD — fill in after running on live VM_
+**Without security measures:** Attack reached the SSH service and ran to completion; no valid password found.
+**With security measures:** Connection timed out — firewall blocked the attack before authentication could be attempted.
 
 ### 3. DoS Simulation
 
 Used to measure whether the firewall/router can detect and withstand a
 traffic flood directed at the IoT devices.
 
-- `hping3 -S --flood -p 80 192.168.20.10` — SYN flood against iot-device-1
-- `hping3 --icmp --flood 192.168.20.10` — ICMP flood against iot-device-1
-
 Firewall logs were monitored in real time during each test via:
 `sudo journalctl -kf | grep DROP`
 
-**Expected result:** The firewall should rate-limit or drop excess traffic
-and log the activity, demonstrating resilience and visibility into the
-attack rather than allowing it to pass through unchecked.
+`hping3 -S --flood -p 80 192.168.20.10`
 
-**Result:** _TBD — fill in after running on live VM_
+**Without security measures:** SYN flood reached iot-device-1, generating continuous SYN/RST traffic in the packet capture.
+**With security measures:** No flood traffic reached iot-device-1 — `tcpdump` on the device showed zero incoming packets during the attack.
