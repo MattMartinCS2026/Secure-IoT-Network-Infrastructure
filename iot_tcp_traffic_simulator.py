@@ -12,7 +12,7 @@ MAX_PAYLOAD_SIZE = 1024         # defines the largest allowed payload size in by
 
 def run_test(interval, duration, payload_size):                             # runs the bounded connectivity test with validated settings
     marker = b"IOT_NETWORK_TEST_DATA"                                       # creates a repeated byte sequence to use as test payload dat
-    payload = (marker * (payload_size // len(marker) + 1))[:payload_size]  # builds payload data of the requested size
+    payload = (marker * (payload_size // len(marker) + 1))[:payload_size]   # builds payload data of the requested size
 
     successful = 0  # counts connections that succeed
     failed = 0      # counts connections that fail
